@@ -3,6 +3,7 @@ package br.com.algaecommerce.api.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequestMapping(value = "/pedidos")
 public class HomeController {
 	@PersistenceContext EntityManager m;
 	@Autowired produtoRepository produtoRepository;
@@ -38,11 +40,9 @@ public class HomeController {
 		return p;
 	}
 	//TODO Da 200 mas fica mostrando erro
-	@RequestMapping(value = "/pedidos", method = RequestMethod.GET)
-	@Transactional
+	@GetMapping
 	public @ResponseBody List<Pedido> buscar() {
-		List<Pedido> pedidoRepositorioAll = pedidoRepositorio.findAll();
-		return pedidoRepositorioAll;
+		return pedidoRepositorio.findAll();
 	}
 	
 	@RequestMapping(value = "/produto", method = RequestMethod.POST) @Transactional

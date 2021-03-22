@@ -1,15 +1,18 @@
 package br.com.algaecommerce.domain.model;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Pedido {
@@ -20,12 +23,15 @@ public class Pedido {
 	
 	private LocalDateTime dataCriacao;
 	
+	
 	@ManyToMany
 	private List<Produto> produtoList = new ArrayList<>();
 	
-	@ManyToOne
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Cliente cliente;
 	
+	@JsonIgnore
 	@Embedded
 	private Endereco enderecoEntrega;
 	
