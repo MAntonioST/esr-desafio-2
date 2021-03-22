@@ -62,13 +62,12 @@ public class HomeController {
 	}
 	
 	//TODO Está lento em produção, local funciona.
-	@RequestMapping(value = "/produtos", method = RequestMethod.GET)
-	@Transactional
-	public @ResponseBody List<Produto> cadastrarUmProdutoNovo() {
-		return new produtoRepository(m).findAll();
+	@GetMapping("/produtos")
+	public @ResponseBody List<Produto> buscarProduto() {
+		return produtoRepositorio.findAll();
 	}
 	
-	//TODO da um erro --corrigido
+	
 	@PutMapping("produtos/{produtoId}")
 	public ResponseEntity<?>  edita(@PathVariable Long produtoId, @RequestBody Produto pAntigo) {
 		try {
@@ -89,19 +88,4 @@ public class HomeController {
 		}
 	}
 	
-	@Component
-	class produtoRepository {
-		
-		EntityManager manager;
-		
-		produtoRepository(EntityManager manager) {
-			this.manager = manager;
-		}
-		
-		List<Produto> findAll() {
-			TypedQuery<Produto> typedQuery = manager.createQuery("select p from Produto p", Produto.class);
-			List<Produto> lista = typedQuery.getResultList();
-			return new ArrayList<>(lista);
-		}
-	}
 }
