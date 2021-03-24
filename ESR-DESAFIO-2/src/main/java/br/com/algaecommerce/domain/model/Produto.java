@@ -7,6 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +25,9 @@ public class Produto {
 	
 	private String nome;
 	
+	@JsonIgnore
+	@CreationTimestamp
+	@Column(nullable = false)
 	private LocalDateTime dataCriacao;
 	
 	@ElementCollection(targetClass = String.class)

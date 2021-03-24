@@ -25,12 +25,14 @@ public class InitBancoDeDados implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 		for (int i = 0; i < 20; i++) {
 			Produto produto1 = new Produto();
+			produto1.setDataCriacao(LocalDateTime.now());
 			produto1.setNome("Desktop");
 			produto1.setTags(Arrays.asList("TI", "Mesa"));
 			manager.persist(produto1);
 			
 			
 			Produto produto2 = new Produto();
+			produto2.setDataCriacao(LocalDateTime.now());
 			produto2.setNome("Notebook");
 			produto2.setTags(Arrays.asList("TI", "Portátil", "Departamento de TI"));
 			manager.persist(produto2);
