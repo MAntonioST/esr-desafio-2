@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Produto;
 import br.com.algaecommerce.domain.model.service.CadastroProdutoService;
+
+
 
 @RestController
 @RequestMapping(value = "/produtos")
@@ -38,14 +39,18 @@ public class ProdutoController {
 			Produto produto = cadastroProduto.buscarPorId(produtoId);
 				return ResponseEntity.ok(produto);
 		} catch (EntidadeNaoEncontradaException e) {
-			    return ResponseEntity.notFound().build();
+			 return ResponseEntity
+			    		.status(HttpStatus.NOT_FOUND)
+			    		.body(e.getMessage());
 		}
 		
 	}
 
 	@GetMapping
-	public @ResponseBody List<Produto> buscarProduto() {
-		return cadastroProduto.listar();
+	public ResponseEntity<List<Produto>> findAll(){
+		List<Produto> list = cadastroProduto.listar();
+		return ResponseEntity.ok().body(list);
+		
 	}
 
 	@PutMapping("/{produtoId}")
@@ -54,18 +59,22 @@ public class ProdutoController {
 			Produto produtoAtualizado = cadastroProduto.atualizar(produtoId, pAntigo);		
 				return ResponseEntity.ok(produtoAtualizado);		
 		} catch (EntidadeNaoEncontradaException e) {
-			   return ResponseEntity.notFound().build();
+			 return ResponseEntity
+			    		.status(HttpStatus.NOT_FOUND)
+			    		.body(e.getMessage());
 		}
 	}
 
 	@DeleteMapping("/{produtoId}")
-	public ResponseEntity<Produto> excluir(@PathVariable Long produtoId) {
+	public ResponseEntity<?> excluir(@PathVariable Long produtoId) {
 		try {
 			cadastroProduto.excluir(produtoId);
 			return ResponseEntity.noContent().build();
 
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
+			 return ResponseEntity
+			    		.status(HttpStatus.NOT_FOUND)
+			    		.body(e.getMessage());
 
 		} catch (EntidadeEmUsoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();

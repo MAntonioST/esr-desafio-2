@@ -27,6 +27,7 @@ public class Produto {
 	@Column(nullable = false)
 	private LocalDateTime dataCriacao;
 	
+	@JsonIgnore
 	@ElementCollection(targetClass = String.class)
 	@CollectionTable(name = "produto_tag", joinColumns = @JoinColumn(name = "produto_id"))
 	@Column(name="nome")

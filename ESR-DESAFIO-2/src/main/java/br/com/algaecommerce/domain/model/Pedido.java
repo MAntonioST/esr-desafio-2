@@ -21,6 +21,7 @@ public class Pedido {
 	@GeneratedValue
 	private Long id;
 	
+	
 	@CreationTimestamp
 	@Column(nullable = false)
 	private LocalDateTime dataCriacao;
@@ -33,7 +34,7 @@ public class Pedido {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Cliente cliente;
 	
-	@JsonIgnore
+	
 	@Embedded
 	private Endereco enderecoEntrega;
 	

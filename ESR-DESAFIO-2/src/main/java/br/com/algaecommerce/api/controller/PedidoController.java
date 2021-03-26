@@ -1,51 +1,89 @@
 package br.com.algaecommerce.api.controller;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
+import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
+import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Pedido;
-import br.com.algaecommerce.domain.model.service.CadastroProdutoService;
-import br.com.algaecommerce.domain.repository.PedidoRepository;
+import br.com.algaecommerce.domain.model.service.CadastroPedidoService;
+
 
 @RestController
 @RequestMapping(value = "/pedidos")
 public class PedidoController {
 	
-	@PersistenceContext EntityManager m;
 	
 	@Autowired 
-	CadastroProdutoService cadastroProduto;
-	
-	@Autowired 
-	PedidoRepository pedidoRepositorio;
+	CadastroPedidoService cadastroPedido;
 	
 	
-	@RequestMapping(value = "/pedidos", method = RequestMethod.POST)
-	@Transactional
-	public @ResponseBody Pedido cadastrarUmNovoPedido(@RequestBody Pedido p) {
-		p.setDataCriacao(LocalDateTime.now(ZoneId.systemDefault()));
-		p.setId(null);
-		m.persist(p);
-		return p;
+	
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public Pedido cadastrarUmNovoPedido(@RequestBody Pedido novoPedido) {
+		return cadastroPedido.salvar(novoPedido);
 	}
 	
 	@GetMapping
-	public @ResponseBody List<Pedido> buscar() {
-		return pedidoRepositorio.findAll();
+	public ResponseEntity<List<Pedido>> findAll(){
+		List<Pedido> list = cadastroPedido.listar();
+		return ResponseEntity.ok().body(list);
+		
 	}
 	
+	@GetMapping("/{pedidoId}")
+	public ResponseEntity<?> buscarPorId(@PathVariable Long pedidoId) {
+		try {
+			Pedido pedido = cadastroPedido.buscarPorId(pedidoId);
+				return ResponseEntity.ok(pedido);
+		} catch (EntidadeNaoEncontradaException e) {
+			    return ResponseEntity
+			    		.status(HttpStatus.NOT_FOUND)
+			    		.body(e.getMessage());
+		}
+		
+	}
+
+
+	@PutMapping("/{pedidoId}")
+	public ResponseEntity<?> editar(@PathVariable Long pedidoId, @RequestBody Pedido pAntigo) {	
+		try {
+			Pedido pedidoAtualizado = cadastroPedido.atualizar(pedidoId, pAntigo);		
+				return ResponseEntity.ok(pedidoAtualizado);		
+		} catch (EntidadeNaoEncontradaException e) {
+			    return ResponseEntity
+			    		.status(HttpStatus.NOT_FOUND)
+			    		.body(e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/{peididoId}")
+	public ResponseEntity<?> excluir(@PathVariable Long pedidoId) {
+		try {
+			cadastroPedido.excluir(pedidoId);
+			return ResponseEntity.noContent().build();
+
+		} catch (EntidadeNaoEncontradaException e) {
+			 return ResponseEntity
+			    		.status(HttpStatus.NOT_FOUND)
+			    		.body(e.getMessage());
+
+		} catch (EntidadeEmUsoException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
+	}
+
 	
 }
