@@ -3,21 +3,17 @@ package br.com.algaecommerce.domain.model.service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Produto;
 import br.com.algaecommerce.domain.repository.ProdutoRepository;
+
 
 @Service
 public class CadastroProdutoService {
@@ -42,9 +38,7 @@ public class CadastroProdutoService {
 	}
 
 	public Produto atualizar(Long produtoId, Produto pAntigo) {
-
 		   Produto pNoBanco = buscarPorId(produtoId);
-
 			BeanUtils.copyProperties(pAntigo, pNoBanco, "id", "dataCriacao", "tags");
 			Produto produtoSalvo = produtoRepositorio.save(pNoBanco);
 			return produtoSalvo;

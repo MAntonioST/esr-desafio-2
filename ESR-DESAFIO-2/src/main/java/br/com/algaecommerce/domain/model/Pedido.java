@@ -3,7 +3,7 @@ package br.com.algaecommerce.domain.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-
+import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -21,6 +21,8 @@ public class Pedido {
 	@GeneratedValue
 	private Long id;
 	
+	@CreationTimestamp
+	@Column(nullable = false)
 	private LocalDateTime dataCriacao;
 	
 	

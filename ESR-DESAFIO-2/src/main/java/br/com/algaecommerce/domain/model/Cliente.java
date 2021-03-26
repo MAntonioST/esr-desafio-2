@@ -1,18 +1,22 @@
 package br.com.algaecommerce.domain.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.com.algaecommerce.domain.model.enums.TipoEndereco;
 
 @Entity
 public class Cliente {
@@ -24,10 +28,13 @@ public class Cliente {
 	
 	private String nome;
 	
+	
 	@ElementCollection(targetClass = Endereco.class)
-	@CollectionTable(name = "cliente_endereco", joinColumns = @JoinColumn(name = "cliente_id"))
-	@Column(name="nome")
-	private List<Endereco> enderecos = new ArrayList<>();
+	@CollectionTable(name = "cliente_endereco", 
+	                 joinColumns = @JoinColumn(name = "cliente_id"))
+	@MapKeyColumn(name="tipo")
+	private Map<TipoEndereco, Endereco> enderecos = new HashMap<>();
+	
 	
 	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
@@ -48,14 +55,15 @@ public class Cliente {
 		this.id = id;
 	}
 	
-	public List<Endereco> getEnderecos() {
+
+	public Map<TipoEndereco, Endereco> getEnderecos() {
 		return enderecos;
 	}
-	
-	public void setEnderecos(List<Endereco> enderecos) {
+
+	public void setEnderecos(Map<TipoEndereco, Endereco> enderecos) {
 		this.enderecos = enderecos;
 	}
-	
+
 	public List<Pedido> getPedidos() {
 		return pedidos;
 	}
