@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.algaecommerce.domain.dto.PedidoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Pedido;
@@ -34,14 +35,18 @@ public class CadastroPedidoService {
 	}
 
 	@Transactional
-	public Pedido buscarPorId(Long pedidoId) {
-		return pedidoRepositorio.findById(pedidoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
+	public PedidoDTO buscarPorId(Long pedidoId) {
+		Pedido pedido = pedidoRepositorio.findById(pedidoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Não existe um cadastro de Pedido com código %d", pedidoId)));
+	   
+		
+		return new PedidoDTO(pedido);
 	}
 
 	
 	public Pedido atualizar(Long pedidoId, Pedido pAntigo) {
-		    Pedido pNoBanco = buscarPorId(pedidoId);
+		    Pedido pNoBanco = pedidoRepositorio.findById(pedidoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
+					String.format("Não existe um cadastro de Pedido com código %d", pedidoId)));
 			BeanUtils.copyProperties(pAntigo, pNoBanco, "id", "dataCriacao", "tags");
 			Pedido PedidoSalvo = pedidoRepositorio.save(pNoBanco);
 			return PedidoSalvo;

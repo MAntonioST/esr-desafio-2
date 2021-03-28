@@ -2,6 +2,7 @@ package br.com.algaecommerce.api.controller;
 
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.com.algaecommerce.domain.dto.PedidoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Pedido;
@@ -37,7 +40,7 @@ public class PedidoController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Pedido>> findAll(){
+	public ResponseEntity<List<Pedido>> buscarTodos(){
 		List<Pedido> list = cadastroPedido.listar();
 		return ResponseEntity.ok().body(list);
 		
@@ -46,7 +49,7 @@ public class PedidoController {
 	@GetMapping("/{pedidoId}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long pedidoId) {
 		try {
-			Pedido pedido = cadastroPedido.buscarPorId(pedidoId);
+			PedidoDTO pedido = cadastroPedido.buscarPorId(pedidoId);
 				return ResponseEntity.ok(pedido);
 		} catch (EntidadeNaoEncontradaException e) {
 			    return ResponseEntity
