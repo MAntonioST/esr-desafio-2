@@ -23,7 +23,7 @@ public class InitBancoDeDados implements ApplicationRunner {
 	@Override
 	@Transactional
 	public void run(ApplicationArguments args) throws Exception {
-		
+		for (int i = 0; i < 20; i++) {
 			Produto produto1 = new Produto();
 			produto1.setDataCriacao(LocalDateTime.now());
 			produto1.setNome("Desktop");
@@ -60,8 +60,6 @@ public class InitBancoDeDados implements ApplicationRunner {
 			cliente1.setNome("João");
 			cliente1.getEnderecos().put(TipoEndereco.ENDERECO_ENTREGA, enderecoEntrega);
 			cliente1.getEnderecos().put(TipoEndereco.ENDERECO_RESIDENCIAL, enderecoResidencial);
-			//cliente1.setEnderecos(Collections.singletonMap(TipoEndereco.ENDERECO_ENTREGA, enderecoEntrega));
-			//cliente1.setEnderecos(Collections.singletonMap(TipoEndereco.ENDERECO_RESIDENCIAL, enderecoResidencial));
 			manager.persist(cliente1);
 			
 			
@@ -79,7 +77,7 @@ public class InitBancoDeDados implements ApplicationRunner {
 			enderecoEntrega1.setCidade("São Paulo");
 			enderecoEntrega1.setEstado("SP");
 			enderecoEntrega1.setComplemento("casa");
-			enderecoEntrega1.setLogradouro("Rua Ermilino Matarazzo");
+			enderecoEntrega1.setLogradouro("Av Ermelino Matarazzo");
 			enderecoEntrega1.setNumero("500");
 			
 			
@@ -96,8 +94,7 @@ public class InitBancoDeDados implements ApplicationRunner {
 			cliente2.setNome("Maria");
 			cliente2.getEnderecos().put(TipoEndereco.ENDERECO_ENTREGA, enderecoEntrega1);
 			cliente2.getEnderecos().put(TipoEndereco.ENDERECO_RESIDENCIAL, enderecoResidencial1);
-			//cliente2.setEnderecos(Collections.singletonMap(TipoEndereco.ENDERECO_ENTREGA, enderecoEntrega1));
-			//cliente2.setEnderecos(Collections.singletonMap(TipoEndereco.ENDERECO_RESIDENCIAL, enderecoResidencial1));
+	
 			manager.persist(cliente2);
 			
 			Pedido pedido2 = new Pedido();
@@ -106,6 +103,6 @@ public class InitBancoDeDados implements ApplicationRunner {
 			pedido2.setCliente(cliente2);
 			pedido2.setEnderecoEntrega(enderecoEntrega1);;
 			manager.persist(pedido2);
-	
+		}
 	}
 }

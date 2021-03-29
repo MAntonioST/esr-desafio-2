@@ -32,7 +32,6 @@ public class ProdutoDTO {
 	public ProdutoDTO(Produto entidade) {
 		id = entidade.getId();
 		nome = entidade.getNome();
-		dataCriacao =  entidade.getDataCriacao();
 		tags = entidade.getTags();
 	}
 

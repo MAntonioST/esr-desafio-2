@@ -49,8 +49,8 @@ public class PedidoController {
 	@GetMapping("/{pedidoId}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long pedidoId) {
 		try {
-			PedidoDTO pedido = cadastroPedido.buscarPorId(pedidoId);
-				return ResponseEntity.ok(pedido);
+			PedidoDTO dto = cadastroPedido.buscarPorId(pedidoId);
+				return ResponseEntity.ok(dto);
 		} catch (EntidadeNaoEncontradaException e) {
 			    return ResponseEntity
 			    		.status(HttpStatus.NOT_FOUND)

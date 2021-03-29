@@ -38,6 +38,8 @@ public class Pedido {
 	@Embedded
 	private Endereco enderecoEntrega;
 	
+	
+
 	public Long getId() {
 		return id;
 	}
