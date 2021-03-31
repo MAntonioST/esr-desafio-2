@@ -3,9 +3,10 @@ package br.com.algaecommerce.domain.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import br.com.algaecommerce.domain.model.Cliente;
 import br.com.algaecommerce.domain.model.Endereco;
 import br.com.algaecommerce.domain.model.Pedido;
+import br.com.algaecommerce.domain.model.Produto;
 
 
 
@@ -13,7 +14,7 @@ public class PedidoDTO {
 
 	
 	private Long pedidoId;
-	private String cliente;
+	private Cliente cliente;
 	private Endereco enderecoEntrega;
 	private List<ProdutoDTO> produtoList = new ArrayList<>();
 	
@@ -23,7 +24,7 @@ public class PedidoDTO {
 	}
 	
 	
-	public PedidoDTO(Long pedidoId, String cliente, Endereco enderecoEntrega) {
+	public PedidoDTO(Long pedidoId, Cliente cliente, Endereco enderecoEntrega) {
 		super();
 		this.pedidoId = pedidoId;
 		this.cliente = cliente;
@@ -34,11 +35,15 @@ public class PedidoDTO {
 
 	public PedidoDTO(Pedido entidade) {
 		pedidoId = entidade.getId();
-		cliente = entidade.getCliente().getNome();
+		cliente = entidade.getCliente();
+		cliente.setPedidos(null);
+		cliente.setEnderecos(null);
 		enderecoEntrega = entidade.getEnderecoEntrega();
-		produtoList = entidade.getProdutoList().stream()
-		         .map(p -> new ProdutoDTO(p))
-		         .collect(Collectors.toList());
+	}
+	
+	public PedidoDTO(Pedido entidade, List<Produto> produtos) {
+		this(entidade);
+		produtos.forEach(p -> this.produtoList.add(new ProdutoDTO(p)));
 	}
 
 
@@ -51,13 +56,13 @@ public class PedidoDTO {
 		this.pedidoId = pedidoId;
 	}
 
-
-	public String getCliente() {
+	
+	public Cliente getCliente() {
 		return cliente;
 	}
 
 
-	public void setCliente(String cliente) {
+	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
 

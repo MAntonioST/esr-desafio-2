@@ -38,7 +38,20 @@ public class Pedido {
 	@Embedded
 	private Endereco enderecoEntrega;
 	
+	public Pedido() {
 	
+	}
+	
+
+	public Pedido(Long id, LocalDateTime dataCriacao, Cliente cliente, Endereco enderecoEntrega) {
+		super();
+		this.id = id;
+		this.dataCriacao = dataCriacao;
+		this.cliente = cliente;
+		this.enderecoEntrega = enderecoEntrega;
+	}
+
+
 
 	public Long getId() {
 		return id;

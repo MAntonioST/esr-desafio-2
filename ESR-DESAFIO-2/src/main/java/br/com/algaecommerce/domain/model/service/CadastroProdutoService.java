@@ -3,12 +3,16 @@ package br.com.algaecommerce.domain.model.service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.algaecommerce.domain.dto.ProdutoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Produto;
@@ -27,18 +31,23 @@ public class CadastroProdutoService {
 		return produtoRepositorio.save(produto);
 	}
 
-	public List<Produto> listar() {
-		return produtoRepositorio.findAll();
+	public List<ProdutoDTO> listar() {
+		List<Produto> produtos = produtoRepositorio.findAll();
+		return produtos.stream()
+				       .map(p -> new  ProdutoDTO(p))
+				       .collect(Collectors.toList());
 	}
 
 	@Transactional
-	public Produto buscarPorId(Long produtoId) {
-		return produtoRepositorio.findById(produtoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
+	public ProdutoDTO buscarPorId(Long produtoId) {
+		Produto produto = produtoRepositorio.findById(produtoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Não existe um cadastro de Produto com código %d", produtoId)));
+	    return new ProdutoDTO(produto);
 	}
 
 	public Produto atualizar(Long produtoId, Produto pAntigo) {
-		   Produto pNoBanco = buscarPorId(produtoId);
+		   Produto pNoBanco = produtoRepositorio.findById(produtoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
+					String.format("Não existe um cadastro de Produto com código %d", produtoId)));
 			BeanUtils.copyProperties(pAntigo, pNoBanco, "id", "dataCriacao", "tags");
 			Produto produtoSalvo = produtoRepositorio.save(pNoBanco);
 			return produtoSalvo;

@@ -35,8 +35,8 @@ public class PedidoController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Pedido cadastrarUmNovoPedido(@RequestBody Pedido novoPedido) {
-		return cadastroPedido.salvar(novoPedido);
+	public Pedido cadastrarUmNovoPedido(@RequestBody Pedido pedido) {
+		return cadastroPedido.salvar(pedido);
 	}
 	
 	@GetMapping
@@ -72,7 +72,7 @@ public class PedidoController {
 		}
 	}
 
-	@DeleteMapping("/{peididoId}")
+	@DeleteMapping("/{pedidoId}")
 	public ResponseEntity<?> excluir(@PathVariable Long pedidoId) {
 		try {
 			cadastroPedido.excluir(pedidoId);

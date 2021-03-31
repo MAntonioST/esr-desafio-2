@@ -1,6 +1,7 @@
 package br.com.algaecommerce.api.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.com.algaecommerce.domain.dto.ProdutoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
 import br.com.algaecommerce.domain.model.Produto;
@@ -36,8 +39,8 @@ public class ProdutoController {
 	@GetMapping("/{produtoId}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long produtoId) {
 		try {
-			Produto produto = cadastroProduto.buscarPorId(produtoId);
-				return ResponseEntity.ok(produto);
+			ProdutoDTO dto = cadastroProduto.buscarPorId(produtoId);
+				return ResponseEntity.ok(dto);
 		} catch (EntidadeNaoEncontradaException e) {
 			 return ResponseEntity
 			    		.status(HttpStatus.NOT_FOUND)
@@ -47,8 +50,8 @@ public class ProdutoController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Produto>> findAll(){
-		List<Produto> list = cadastroProduto.listar();
+	public ResponseEntity<List<ProdutoDTO>> findAll(){
+		List<ProdutoDTO> list = cadastroProduto.listar();
 		return ResponseEntity.ok().body(list);
 		
 	}
