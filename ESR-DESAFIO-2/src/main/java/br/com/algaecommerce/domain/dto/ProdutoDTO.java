@@ -1,8 +1,8 @@
 package br.com.algaecommerce.domain.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import br.com.algaecommerce.domain.model.Produto;
 
@@ -14,7 +14,7 @@ public class ProdutoDTO {
 	private Long id;
 	private String nome;
 	private LocalDateTime dataCriacao;
-	private List<String> tags = new ArrayList<>();
+	private Set<String> tags = new HashSet<>();
 	
 
 	public ProdutoDTO() {
@@ -65,14 +65,15 @@ public class ProdutoDTO {
 	}
 
 
-	public List<String> getTags() {
+	public Set<String> getTags() {
 		return tags;
 	}
 
 
-	public void setTags(List<String> tags) {
+	public void setTags(Set<String> tags) {
 		this.tags = tags;
 	}
-	
+
+
 	
 }

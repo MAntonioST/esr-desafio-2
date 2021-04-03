@@ -11,7 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
 import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -26,7 +28,7 @@ public class Pedido {
 	@Column(nullable = false)
 	private LocalDateTime dataCriacao;
 	
-	
+	@JsonIgnore
 	@ManyToMany
 	private List<Produto> produtoList = new ArrayList<>();
 	
@@ -69,14 +71,17 @@ public class Pedido {
 		this.dataCriacao = dataCriacao;
 	}
 	
+
 	public List<Produto> getProdutoList() {
 		return produtoList;
 	}
-	
+
+
 	public void setProdutoList(List<Produto> produtoList) {
 		this.produtoList = produtoList;
 	}
-	
+
+
 	public Cliente getCliente() {
 		return cliente;
 	}

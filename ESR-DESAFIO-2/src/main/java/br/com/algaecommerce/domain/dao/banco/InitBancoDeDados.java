@@ -27,14 +27,18 @@ public class InitBancoDeDados implements ApplicationRunner {
 			Produto produto1 = new Produto();
 			produto1.setDataCriacao(LocalDateTime.now());
 			produto1.setNome("Desktop");
-			produto1.setTags(Arrays.asList("TI", "Mesa"));
+			produto1.getTags().add("TI");
+			produto1.getTags().add("Mesa");
 			manager.persist(produto1);
 			
 			
 			Produto produto2 = new Produto();
 			produto2.setDataCriacao(LocalDateTime.now());
 			produto2.setNome("Notebook");
-			produto2.setTags(Arrays.asList("TI", "Portátil", "Departamento de TI"));
+			produto2.getTags().add("TI");
+			produto2.getTags().add("Portátil");
+			produto2.getTags().add("Departamento de TI");
+			//produto2.setTags(Arrays.asList("TI", "Portátil", "Departamento de TI"));
 			manager.persist(produto2);
 			
 			Endereco enderecoEntrega = new Endereco();

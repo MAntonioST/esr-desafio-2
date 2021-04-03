@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,11 +13,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.algaecommerce.domain.dto.PedidoDTO;
+import br.com.algaecommerce.domain.dto.ProdutoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
+import br.com.algaecommerce.domain.model.Cliente;
+import br.com.algaecommerce.domain.model.Endereco;
 import br.com.algaecommerce.domain.model.Pedido;
+import br.com.algaecommerce.domain.model.Produto;
+import br.com.algaecommerce.domain.repository.ClienteRepository;
 import br.com.algaecommerce.domain.repository.PedidoRepository;
-
+import br.com.algaecommerce.domain.repository.ProdutoRepository;
 
 @Service
 public class CadastroPedidoService {
@@ -25,21 +30,43 @@ public class CadastroPedidoService {
 	@Autowired
 	private PedidoRepository pedidoRepositorio;
 
+	@Autowired
+	private ClienteRepository clienteRepositorio;
+	
+	@Autowired
+	private ProdutoRepository produtoRepositorio;
 
+	
 	@Transactional
-	public Pedido salvar(Pedido entidade) {
+	public PedidoDTO salvar(PedidoDTO dto) {
 		Pedido pedido = new Pedido();
 		pedido.setDataCriacao(LocalDateTime.now(ZoneId.systemDefault()));
-		pedido.setCliente(entidade.getCliente());
-		pedido.setEnderecoEntrega(entidade.getEnderecoEntrega());
-		pedido.setProdutoList(entidade.getProdutoList());
-		return pedidoRepositorio.save(pedido);
+		Cliente cliente = clienteRepositorio.findById(dto.getCliente().getId()).orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Não existe um cadastro de Cliente com código %d", dto.getCliente().getId())));
+	    List<Endereco> end = cliente.getPedidos()
+						    		.stream()
+						    		.map(e -> e.getEnderecoEntrega())
+						    		.collect(Collectors.toList());
+			
+		pedido.setEnderecoEntrega(end.get(0));
+		pedido.setCliente(dto.getCliente());
+		
+		for(ProdutoDTO p : dto.getProdutoList()) {
+			  Produto produto = produtoRepositorio.findById(p.getId()).orElseThrow(() -> new EntidadeNaoEncontradaException(
+						String.format("Não existe um cadastro de Produto com código %d", p.getId())));
+			  pedido.getProdutoList().add(produto);
+			}
+		pedido = pedidoRepositorio.save(pedido);
+		return new PedidoDTO(pedido);
 	}
 
 	@Transactional(readOnly = true)
-	public List<Pedido> listar() {
-		return pedidoRepositorio.findAll();
-		
+	public List<PedidoDTO> listar() {
+		List<Pedido> list =  pedidoRepositorio.findAll();
+		return list.stream()
+				   .map(p -> new PedidoDTO(p, p.getProdutoList()))
+				   .distinct()
+				   .collect(Collectors.toList());
 	}
 
 	@Transactional
@@ -47,8 +74,8 @@ public class CadastroPedidoService {
 		Optional<Pedido> obj = pedidoRepositorio.findById(pedidoId);
 		Pedido entidade = obj.orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Não existe um cadastro de Pedido com código %d", pedidoId)));
-		return new PedidoDTO(entidade, entidade.getProdutoList());
-		
+		return new PedidoDTO(entidade);
+
 	}
 
 	public Pedido atualizar(Long pedidoId, Pedido pAntigo) {
@@ -71,4 +98,5 @@ public class CadastroPedidoService {
 					String.format("Pedido de código %d não pode ser removida, pois está em uso", pedidoId));
 		}
 	}
+		
 }

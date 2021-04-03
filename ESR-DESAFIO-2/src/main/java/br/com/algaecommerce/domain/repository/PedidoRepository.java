@@ -15,11 +15,16 @@ import br.com.algaecommerce.domain.model.Pedido;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long>{
 	
-	@Query("SELECT DISTINCT p FROM Pedido p  JOIN FETCH  p.produtoList")
+	@Query("SELECT DISTINCT p FROM Pedido p JOIN FETCH p.cliente "
+			+ "JOIN FETCH p.produtoList t  JOIN FETCH t.tags ORDER BY p.id ASC")
 	List<Pedido> findAll();
 	
 	
-	@Query("FROM Pedido p JOIN FETCH p.cliente JOIN FETCH p.produtoList WHERE  p.id = :id ")
+	@Query("FROM Pedido p JOIN FETCH p.cliente "
+			+ "JOIN FETCH p.produtoList t JOIN FETCH t.tags WHERE  p.id = :id ")
 	Optional<Pedido> findById(@Param("id")Long id);
+
+
+	
 	
 } 

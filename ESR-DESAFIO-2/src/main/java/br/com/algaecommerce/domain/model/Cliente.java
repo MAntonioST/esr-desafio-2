@@ -8,11 +8,13 @@ import java.util.Map;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
@@ -33,6 +35,7 @@ public class Cliente {
 	@CollectionTable(name = "cliente_endereco", 
 	                 joinColumns = @JoinColumn(name = "cliente_id"))
 	@MapKeyColumn(name="tipo")
+	@MapKeyEnumerated(EnumType.STRING)
 	private Map<TipoEndereco, Endereco> enderecos = new HashMap<>();
 	
 	
