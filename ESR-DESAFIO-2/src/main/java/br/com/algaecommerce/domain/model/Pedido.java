@@ -36,7 +36,7 @@ public class Pedido {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Cliente cliente;
 	
-	@JsonIgnore
+	
 	@Embedded
 	private Endereco enderecoEntrega;
 	

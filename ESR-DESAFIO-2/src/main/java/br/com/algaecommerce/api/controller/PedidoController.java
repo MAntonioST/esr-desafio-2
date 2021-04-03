@@ -65,10 +65,10 @@ public class PedidoController {
 
 
 	@PutMapping("/{pedidoId}")
-	public ResponseEntity<?> editar(@PathVariable Long pedidoId, @RequestBody Pedido pAntigo) {	
+	public ResponseEntity<?> editar(@PathVariable Long pedidoId, @RequestBody PedidoDTO pAntigo) {	
 		try {
-			Pedido pedidoAtualizado = cadastroPedido.atualizar(pedidoId, pAntigo);		
-				return ResponseEntity.ok(pedidoAtualizado);		
+			PedidoDTO pedidoAtualizado = cadastroPedido.atualizar(pedidoId, pAntigo);		
+			return ResponseEntity.ok().body(pedidoAtualizado);		
 		} catch (EntidadeNaoEncontradaException e) {
 			    return ResponseEntity
 			    		.status(HttpStatus.NOT_FOUND)

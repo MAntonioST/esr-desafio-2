@@ -2,6 +2,7 @@ package br.com.algaecommerce.domain.model.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,12 +79,13 @@ public class CadastroPedidoService {
 
 	}
 
-	public Pedido atualizar(Long pedidoId, Pedido pAntigo) {
-		Pedido pNoBanco = pedidoRepositorio.findById(pedidoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
-				String.format("Não existe um cadastro de Pedido com código %d", pedidoId)));
-		BeanUtils.copyProperties(pAntigo, pNoBanco, "id", "dataCriacao");
-		Pedido PedidoSalvo = pedidoRepositorio.save(pNoBanco);
-		return PedidoSalvo;
+	public PedidoDTO atualizar(Long pedidoId, PedidoDTO pAntigo) {
+		Pedido pNoBanco = pedidoRepositorio.findById(pedidoId).orElse(null);
+		convertDtoToEntity(pAntigo, pNoBanco);
+		BeanUtils.copyProperties(pNoBanco, pAntigo, "id","cliente", "enderecoEntrega","dataCriacao");
+		
+		pNoBanco = pedidoRepositorio.save(pNoBanco);
+		return new PedidoDTO(pNoBanco, pNoBanco.getProdutoList());
 
 	}
 
@@ -98,5 +100,16 @@ public class CadastroPedidoService {
 					String.format("Pedido de código %d não pode ser removida, pois está em uso", pedidoId));
 		}
 	}
+
+
+	private void convertDtoToEntity(PedidoDTO dto, Pedido entidade) {
+		entidade.setCliente(dto.getCliente());
+		entidade.setEnderecoEntrega(dto.getEnderecoEntrega());;
+		entidade.getProdutoList().clear();
+		for(ProdutoDTO proDTO : dto.getProdutoList()) {
+			Produto p = produtoRepositorio.getOne(proDTO.getId());
+			entidade.getProdutoList().add(p);
+		}
 		
+	}
 }
