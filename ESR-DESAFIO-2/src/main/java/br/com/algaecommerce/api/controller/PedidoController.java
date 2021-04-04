@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.algaecommerce.domain.dto.PedidoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
-import br.com.algaecommerce.domain.model.Pedido;
 import br.com.algaecommerce.domain.model.service.CadastroPedidoService;
 
 

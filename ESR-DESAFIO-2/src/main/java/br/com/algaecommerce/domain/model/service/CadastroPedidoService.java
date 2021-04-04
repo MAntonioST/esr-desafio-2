@@ -2,7 +2,6 @@ package br.com.algaecommerce.domain.model.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,7 +45,7 @@ public class CadastroPedidoService {
 				String.format("Não existe um cadastro de Cliente com código %d", dto.getCliente().getId())));
 	    List<Endereco> end = cliente.getPedidos()
 						    		.stream()
-						    		.map(e -> e.getEnderecoEntrega())
+						    		.map(c -> c.getEnderecoEntrega())
 						    		.collect(Collectors.toList());
 			
 		pedido.setEnderecoEntrega(end.get(0));
@@ -70,7 +69,7 @@ public class CadastroPedidoService {
 				   .collect(Collectors.toList());
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public PedidoDTO buscarPorId(Long pedidoId) {
 		Optional<Pedido> obj = pedidoRepositorio.findById(pedidoId);
 		Pedido entidade = obj.orElseThrow(() -> new EntidadeNaoEncontradaException(
@@ -79,13 +78,16 @@ public class CadastroPedidoService {
 
 	}
 
-	public PedidoDTO atualizar(Long pedidoId, PedidoDTO pAntigo) {
-		Pedido pNoBanco = pedidoRepositorio.findById(pedidoId).orElse(null);
-		convertDtoToEntity(pAntigo, pNoBanco);
-		BeanUtils.copyProperties(pNoBanco, pAntigo, "id","cliente", "enderecoEntrega","dataCriacao");
+	@Transactional
+	public PedidoDTO atualizar(Long pedidoId, PedidoDTO dto) {
+		Pedido pedido = new Pedido();
+		Pedido pedidoAtual = pedidoRepositorio.findById(pedidoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Não existe um cadastro de Pedido com código %d", pedidoId)));;
+		converteDtoParaEntidade(dto, pedido);
+		BeanUtils.copyProperties(pedido, pedidoAtual, "id","cliente", "enderecoEntrega","dataCriacao");
 		
-		pNoBanco = pedidoRepositorio.save(pNoBanco);
-		return new PedidoDTO(pNoBanco, pNoBanco.getProdutoList());
+		pedidoAtual = pedidoRepositorio.save(pedidoAtual);
+		return new PedidoDTO(pedidoAtual, pedidoAtual.getProdutoList());
 
 	}
 
@@ -102,9 +104,9 @@ public class CadastroPedidoService {
 	}
 
 
-	private void convertDtoToEntity(PedidoDTO dto, Pedido entidade) {
+	private void converteDtoParaEntidade(PedidoDTO dto, Pedido entidade) {
 		entidade.setCliente(dto.getCliente());
-		entidade.setEnderecoEntrega(dto.getEnderecoEntrega());;
+		entidade.setEnderecoEntrega(dto.getEnderecoEntrega());
 		entidade.getProdutoList().clear();
 		for(ProdutoDTO proDTO : dto.getProdutoList()) {
 			Produto p = produtoRepositorio.getOne(proDTO.getId());

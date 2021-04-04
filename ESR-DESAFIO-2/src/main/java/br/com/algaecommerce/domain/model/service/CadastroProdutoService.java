@@ -2,7 +2,9 @@ package br.com.algaecommerce.domain.model.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
@@ -26,9 +28,15 @@ public class CadastroProdutoService {
 	private ProdutoRepository produtoRepositorio;
 
 	@Transactional
-	public Produto salvar(Produto produto) {
+	public ProdutoDTO salvar(ProdutoDTO dto) {
+		Produto produto = new Produto();
 		produto.setDataCriacao(LocalDateTime.now(ZoneId.systemDefault()));
-		return produtoRepositorio.save(produto);
+		produto.setNome(dto.getNome());
+		Set<String> produtoTags = new HashSet<>();
+		dto.getTags().forEach(p -> produtoTags.add(p));
+		produto.setTags(dto.getTags());
+		produto = produtoRepositorio.save(produto);
+		return new ProdutoDTO(produto);
 	}
 
 	public List<ProdutoDTO> listar() {
@@ -45,12 +53,14 @@ public class CadastroProdutoService {
 	    return new ProdutoDTO(produto);
 	}
 
-	public Produto atualizar(Long produtoId, Produto pAntigo) {
-		   Produto pNoBanco = produtoRepositorio.findById(produtoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
+	public ProdutoDTO atualizar(Long produtoId, ProdutoDTO dto) {
+		   Produto produto = new Produto();
+		   Produto produtoAtual = produtoRepositorio.findById(produtoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
 					String.format("Não existe um cadastro de Produto com código %d", produtoId)));
-			BeanUtils.copyProperties(pAntigo, pNoBanco, "id", "dataCriacao", "tags");
-			Produto produtoSalvo = produtoRepositorio.save(pNoBanco);
-			return produtoSalvo;
+		   converteDtoParaEntidade(dto,produto);
+			BeanUtils.copyProperties(produto, produtoAtual, "id", "dataCriacao");
+			produtoAtual = produtoRepositorio.save(produtoAtual);
+			return new ProdutoDTO(produtoAtual);
 	
 	}
 
@@ -65,5 +75,14 @@ public class CadastroProdutoService {
 			throw new EntidadeEmUsoException(
 					String.format("Produto de código %d não pode ser removida, pois está em uso", ProdutoId));
 		}
+	}
+	
+	private void converteDtoParaEntidade(ProdutoDTO dto, Produto entidade) {
+		entidade.setNome(dto.getNome());
+		entidade.getTags().clear();
+		Set<String> produtoTags = new HashSet<>();
+		dto.getTags().forEach(p -> produtoTags.add(p));
+		entidade.setTags(dto.getTags());
+		
 	}
 }
