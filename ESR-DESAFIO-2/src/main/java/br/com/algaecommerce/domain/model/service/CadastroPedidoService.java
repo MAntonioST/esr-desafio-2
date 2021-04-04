@@ -65,7 +65,6 @@ public class CadastroPedidoService {
 		List<Pedido> list =  pedidoRepositorio.findAll();
 		return list.stream()
 				   .map(p -> new PedidoDTO(p, p.getProdutoList()))
-				   .distinct()
 				   .collect(Collectors.toList());
 	}
 
