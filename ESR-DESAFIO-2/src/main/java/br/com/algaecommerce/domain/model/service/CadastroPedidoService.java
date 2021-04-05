@@ -2,6 +2,7 @@ package br.com.algaecommerce.domain.model.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,8 +52,7 @@ public class CadastroPedidoService {
 		pedido.setCliente(dto.getCliente());
 		
 		for(ProdutoDTO p : dto.getProdutoList()) {
-			  Produto produto = produtoRepositorio.findById(p.getId()).orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format("Não existe um cadastro de Produto com código %d", p.getId())));
+			  Produto produto = produtoRepositorio.getOne(p.getId());
 			  pedido.getProdutoList().add(produto);
 			}
 		pedido = pedidoRepositorio.save(pedido);
