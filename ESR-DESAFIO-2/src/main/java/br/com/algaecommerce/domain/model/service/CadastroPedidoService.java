@@ -20,6 +20,7 @@ import br.com.algaecommerce.domain.model.Cliente;
 import br.com.algaecommerce.domain.model.Endereco;
 import br.com.algaecommerce.domain.model.Pedido;
 import br.com.algaecommerce.domain.model.Produto;
+import br.com.algaecommerce.domain.model.enums.TipoEndereco;
 import br.com.algaecommerce.domain.repository.ClienteRepository;
 import br.com.algaecommerce.domain.repository.PedidoRepository;
 import br.com.algaecommerce.domain.repository.ProdutoRepository;
@@ -43,12 +44,10 @@ public class CadastroPedidoService {
 		pedido.setDataCriacao(LocalDateTime.now(ZoneId.systemDefault()));
 		Cliente cliente = clienteRepositorio.findById(dto.getCliente().getId()).orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Não existe um cadastro de Cliente com código %d", dto.getCliente().getId())));
-	    List<Endereco> end = cliente.getPedidos()
-						    		.stream()
-						    		.map(c -> c.getEnderecoEntrega())
-						    		.collect(Collectors.toList());
-			
-		pedido.setEnderecoEntrega(end.get(0));
+	    
+		Endereco end = cliente.getEnderecos().get(TipoEndereco.ENDERECO_ENTREGA);
+						    				
+		pedido.setEnderecoEntrega(end);
 		pedido.setCliente(dto.getCliente());
 		
 		for(ProdutoDTO p : dto.getProdutoList()) {
