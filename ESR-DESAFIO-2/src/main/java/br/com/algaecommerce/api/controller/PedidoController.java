@@ -37,15 +37,14 @@ public class PedidoController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 		} catch (EntidadeNaoEncontradaException e) {
 			    return ResponseEntity
-			    		.status(HttpStatus.NOT_FOUND)
+			    		.status(HttpStatus.BAD_REQUEST)
 			    		.body(e.getMessage());
 		}
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<PedidoDTO>> buscarTodos(){
-		List<PedidoDTO> list = cadastroPedido.listar();
-		return ResponseEntity.ok().body(list);
+	public List<PedidoDTO> buscarTodos(){
+		return cadastroPedido.listar();
 		
 	}
 	

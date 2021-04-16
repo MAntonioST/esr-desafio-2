@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.algaecommerce.domain.dto.ProdutoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
@@ -28,9 +29,9 @@ public class ProdutoController {
 	CadastroProdutoService cadastroProduto;
 
 	@PostMapping
-	public ResponseEntity<?> cadastrarUmProdutoNovo(@RequestBody ProdutoDTO dto) {
-		dto = cadastroProduto.salvar(dto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+	@ResponseStatus(HttpStatus.CREATED)
+	public ProdutoDTO cadastrarUmProdutoNovo(@RequestBody ProdutoDTO dto) {
+		return cadastroProduto.salvar(dto);
 	}
 
 	@GetMapping("/{produtoId}")
@@ -47,10 +48,9 @@ public class ProdutoController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<ProdutoDTO>> findAll(){
-		List<ProdutoDTO> list = cadastroProduto.listar();
-		return ResponseEntity.ok().body(list);
-		
+	@ResponseStatus(HttpStatus.OK)
+	public List<ProdutoDTO> findAll(){
+		return cadastroProduto.listar();		
 	}
 
 	@PutMapping("/{produtoId}")

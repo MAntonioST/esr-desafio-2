@@ -1,19 +1,16 @@
 package br.com.algaecommerce.domain.model.service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.algaecommerce.domain.dto.ProdutoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
 import br.com.algaecommerce.domain.exception.EntidadeNaoEncontradaException;
@@ -30,7 +27,6 @@ public class CadastroProdutoService {
 	@Transactional
 	public ProdutoDTO salvar(ProdutoDTO dto) {
 		Produto produto = new Produto();
-		produto.setDataCriacao(LocalDateTime.now(ZoneId.systemDefault()));
 		produto.setNome(dto.getNome());
 		Set<String> produtoTags = new HashSet<>();
 		dto.getTags().forEach(p -> produtoTags.add(p));
@@ -42,6 +38,7 @@ public class CadastroProdutoService {
 	public List<ProdutoDTO> listar() {
 		List<Produto> produtos = produtoRepositorio.findAll();
 		return produtos.stream()
+				       .distinct()
 				       .map(p -> new  ProdutoDTO(p))
 				       .collect(Collectors.toList());
 	}
@@ -58,9 +55,9 @@ public class CadastroProdutoService {
 		   Produto produtoAtual = produtoRepositorio.findById(produtoId).orElseThrow(() -> new EntidadeNaoEncontradaException(
 					String.format("Não existe um cadastro de Produto com código %d", produtoId)));
 		   converteDtoParaEntidade(dto,produto);
-			BeanUtils.copyProperties(produto, produtoAtual, "id", "dataCriacao");
-			produtoAtual = produtoRepositorio.save(produtoAtual);
-			return new ProdutoDTO(produtoAtual);
+		   BeanUtils.copyProperties(produto, produtoAtual, "id", "dataCriacao");
+		   produtoAtual = produtoRepositorio.save(produtoAtual);
+		   return new ProdutoDTO(produtoAtual);
 	
 	}
 

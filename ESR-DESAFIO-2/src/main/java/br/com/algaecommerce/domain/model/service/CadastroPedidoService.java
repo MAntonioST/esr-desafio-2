@@ -1,8 +1,6 @@
 package br.com.algaecommerce.domain.model.service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,7 +10,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.algaecommerce.domain.dto.PedidoDTO;
 import br.com.algaecommerce.domain.dto.ProdutoDTO;
 import br.com.algaecommerce.domain.exception.EntidadeEmUsoException;
@@ -42,7 +39,6 @@ public class CadastroPedidoService {
 	@Transactional
 	public PedidoDTO salvar(PedidoDTO dto) {
 		Pedido pedido = new Pedido();
-		pedido.setDataCriacao(LocalDateTime.now(ZoneId.systemDefault()));
 		Cliente cliente = clienteRepositorio.findById(dto.getCliente().getId()).orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Não existe um cadastro de Cliente com código %d", dto.getCliente().getId())));
 	    
@@ -63,6 +59,7 @@ public class CadastroPedidoService {
 	public List<PedidoDTO> listar() {
 		List<Pedido> list =  pedidoRepositorio.findAll();
 		return list.stream()
+				   .distinct()
 				   .map(p -> new PedidoDTO(p, p.getProdutoList()))
 				   .collect(Collectors.toList());
 	}

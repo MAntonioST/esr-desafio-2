@@ -15,6 +15,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long>{
 	@Query("FROM Produto p JOIN FETCH p.tags WHERE  p.id = :id ")
 	Optional<Produto> findById(Long id);
 	
-	@Query("SELECT DISTINCT p FROM Produto p  JOIN FETCH p.tags")
+	@Query("FROM Produto p  JOIN FETCH p.tags")
 	List<Produto> findAll();
 }
